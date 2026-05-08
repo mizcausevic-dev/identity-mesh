@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 460" font-family="ui-monospace, 'JetBrains Mono', 'SF Mono', Consolas, monospace">
+  <defs>
+    <style>
+      .bg { fill: #0B0C10; }
+      .text-title { fill: #66FCF1; font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+      .text-dim { fill: #45A29E; font-size: 11px; }
+      .label { fill: #C5C6C7; font-size: 12px; }
+      .swimlane { fill: #1F2833; opacity: 0.5; }
+      .arrow { stroke: #66FCF1; stroke-width: 1.5; fill: none; marker-end: url(#a); }
+      .arrow-purple { stroke: #A78BFA; stroke-width: 1.5; fill: none; marker-end: url(#a-purple); }
+      .arrow-red { stroke: #F87171; stroke-width: 1.5; fill: none; marker-end: url(#a-red); stroke-dasharray: 5,3; }
+      .actor { fill: #66FCF1; font-size: 13px; font-weight: 700; }
+    </style>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#66FCF1"/>
+    </marker>
+    <marker id="a-purple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#A78BFA"/>
+    </marker>
+    <marker id="a-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#F87171"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="460" class="bg"/>
+
+  <text x="460" y="40" text-anchor="middle" class="text-title">SVID LIFECYCLE :: 5-MINUTE TOKENS</text>
+  <line x1="180" y1="55" x2="740" y2="55" stroke="#45A29E" stroke-width="1"/>
+
+  <!-- Three swimlanes -->
+  <rect x="40" y="100" width="840" height="60" class="swimlane"/>
+  <text x="60" y="135" class="actor">Agent</text>
+
+  <rect x="40" y="180" width="840" height="60" class="swimlane"/>
+  <text x="60" y="215" class="actor">Broker</text>
+
+  <rect x="40" y="260" width="840" height="60" class="swimlane"/>
+  <text x="60" y="295" class="actor">Service</text>
+
+  <!-- Sequence flow -->
+  <!-- 1. Agent -> Broker: register -->
+  <path d="M180,135 L300,205" class="arrow"/>
+  <text x="240" y="155" class="text-dim" font-size="10">1. register("research-1")</text>
+
+  <!-- 2. Broker -> Agent: SVID -->
+  <path d="M300,215 L180,140" class="arrow-purple"/>
+  <text x="245" y="200" class="text-dim" font-size="10">2. JWT-SVID (exp = now+300s)</text>
+
+  <!-- 3. Agent -> Service: presents -->
+  <path d="M250,140 L450,290" class="arrow"/>
+  <text x="345" y="220" class="text-dim" font-size="10">3. Authorization: Bearer &lt;svid&gt;</text>
+
+  <!-- 4. Service -> Broker: bundle -->
+  <text x="500,300" class="text-dim"></text>
+
+  <!-- 4. Service verifies (loops back to itself) -->
+  <path d="M460,295 Q500,330 540,295" class="arrow"/>
+  <text x="500,335" class="text-dim"></text>
+  <text x="500" y="345" class="text-dim" font-size="10">4. verify against trust_bundle</text>
+
+  <!-- 5. Time passes / token nears expiry -->
+  <line x1="600" y1="330" x2="600" y2="380" stroke="#A78BFA" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="600" y="395" text-anchor="middle" class="text-dim" font-size="10">~ 4 min later ~</text>
+
+  <!-- 6. Agent refreshes -->
+  <path d="M620,140 L720,205" class="arrow"/>
+  <text x="700" y="160" class="text-dim" font-size="10">5. get_svid() -&gt; cache stale</text>
+
+  <!-- 7. Broker mints fresh -->
+  <path d="M720,215 L620,140" class="arrow-purple"/>
+  <text x="710" y="195" class="text-dim" font-size="10">6. fresh SVID</text>
+
+  <!-- 8. Stale token rejected -->
+  <text x="800" y="135" class="text-dim" font-size="10">old SVID:</text>
+  <path d="M820,140 L820,290" class="arrow-red"/>
+  <text x="855" y="220" text-anchor="middle" fill="#F87171" font-size="10" font-weight="600">EXPIRED</text>
+
+  <!-- Bottom legend -->
+  <line x1="100" y1="420" x2="800" y2="420" stroke="#45A29E" stroke-width="1"/>
+  <text x="460" y="445" text-anchor="middle" class="text-dim">Steal a token? You have 5 minutes. Steal a key? There is no key to steal.</text>
+</svg>

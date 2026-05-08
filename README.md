@@ -13,7 +13,7 @@
 ## Why
 
 Most AI agents authenticate to downstream services using long-lived API keys
-baked into environment variables. Compromise one agent → compromise everything
+baked into environment variables. Compromise one agent -> compromise everything
 that key could ever touch. Indefinitely. CISO doesn't sleep.
 
 **identity-mesh** issues short-lived (default 5 min), audience-scoped,
@@ -39,22 +39,15 @@ Built on `pyjwt[crypto]` and `cryptography`. No custom crypto, no surprises.
 
 ## Architecture
 
-```
-+--------------+    register     +------------------+
-|   Workload   | --------------> | IdentityBroker   |
-|  (agent)     |                 | (trust domain)   |
-|              | <-------------- |                  |
-|              |   JWT-SVID      |  RSA-2048 key    |
-+------+-------+   (5 min TTL)   +--------+---------+
-       |                                  |
-       | presents SVID                    | publishes
-       | (Authorization: Bearer ...)      | trust_bundle()
-       v                                  v
-+--------------+                 +------------------+
-|   Service    | <-------------- |    Verifier      |
-| (downstream) |   trust_bundle  |  (kid -> pem)    |
-+--------------+    (JWKS-like)  +------------------+
-```
+![Architecture](docs/architecture.svg)
+
+## SVID lifecycle
+
+Each token lives 5 minutes by default - the agent caches it, presents it,
+and refreshes it before expiry. Stolen tokens are obsolete in minutes,
+not years:
+
+![SVID lifecycle](docs/svid-lifecycle.svg)
 
 ## Install
 
@@ -73,7 +66,7 @@ pytest
 
 ## Quickstart
 
-### Full broker → agent → service flow
+### Full broker -> agent -> service flow
 
 ```python
 from identity_mesh import IdentityBroker, Workload, Verifier
@@ -134,7 +127,8 @@ rotator.stop()
 
 - [`rate-limit-shield`](https://github.com/mizcausevic-dev/rate-limit-shield) - defense-in-depth: identity at the edge, rate-limits at the model
 - [`agent-router`](https://github.com/mizcausevic-dev/agent-router) - route based on `caller.path` (research vs admin agents)
-- *Coming:* `agent-trace-ledger` - tamper-evident audit log keyed by SPIFFE ID
+- [`agent-canary`](https://github.com/mizcausevic-dev/agent-canary) - identity-based canary cohorts
+- [`model-registry-pro`](https://github.com/mizcausevic-dev/model-registry-pro) - tie approval requesters / approvers to SPIFFE identities
 
 ## Roadmap
 

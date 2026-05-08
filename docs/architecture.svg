@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 540" font-family="ui-monospace, 'JetBrains Mono', 'SF Mono', Consolas, monospace">
+  <defs>
+    <style>
+      .bg { fill: #0B0C10; }
+      .surface { fill: #1F2833; }
+      .border { stroke: #45A29E; stroke-width: 1.5; fill: none; }
+      .border-accent { stroke: #66FCF1; stroke-width: 2; fill: none; }
+      .text-primary { fill: #C5C6C7; font-size: 13px; }
+      .text-accent { fill: #66FCF1; font-size: 15px; font-weight: 600; }
+      .text-dim { fill: #45A29E; font-size: 11px; }
+      .text-title { fill: #66FCF1; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+      .arrow { stroke: #66FCF1; stroke-width: 1.5; fill: none; marker-end: url(#a); }
+      .arrow-secondary { stroke: #A78BFA; stroke-width: 1.5; fill: none; marker-end: url(#a-purple); stroke-dasharray: 4,3; }
+    </style>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#66FCF1"/>
+    </marker>
+    <marker id="a-purple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#A78BFA"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="540" class="bg"/>
+
+  <text x="460" y="40" text-anchor="middle" class="text-title">IDENTITY-MESH :: ARCHITECTURE</text>
+  <line x1="180" y1="55" x2="740" y2="55" class="border"/>
+
+  <!-- Workload (left) -->
+  <rect x="40" y="200" width="220" height="120" rx="6" class="surface"/>
+  <rect x="40" y="200" width="220" height="120" rx="6" class="border-accent"/>
+  <text x="150" y="225" text-anchor="middle" class="text-accent">Workload</text>
+  <text x="150" y="245" text-anchor="middle" class="text-dim">(agent)</text>
+  <text x="150" y="270" text-anchor="middle" class="text-primary">name = "research-1"</text>
+  <text x="150" y="290" text-anchor="middle" class="text-dim">caches SVIDs per audience</text>
+  <text x="150" y="308" text-anchor="middle" class="text-dim">auto-refreshes near expiry</text>
+
+  <!-- IdentityBroker (center) -->
+  <rect x="340" y="180" width="240" height="160" rx="6" class="surface"/>
+  <rect x="340" y="180" width="240" height="160" rx="6" class="border-accent"/>
+  <text x="460" y="205" text-anchor="middle" class="text-accent">IdentityBroker</text>
+  <text x="460" y="222" text-anchor="middle" class="text-dim">(trust domain owner)</text>
+  <text x="460" y="248" text-anchor="middle" class="text-primary">RSA-2048 signing key</text>
+  <text x="460" y="268" text-anchor="middle" class="text-primary">register_workload()</text>
+  <text x="460" y="288" text-anchor="middle" class="text-primary">issue_svid()</text>
+  <text x="460" y="313" text-anchor="middle" class="text-dim">trust_bundle() -&gt; JWKS</text>
+
+  <!-- Service (right) -->
+  <rect x="660" y="200" width="220" height="120" rx="6" class="surface"/>
+  <rect x="660" y="200" width="220" height="120" rx="6" class="border-accent"/>
+  <text x="770" y="225" text-anchor="middle" class="text-accent">Verifier</text>
+  <text x="770" y="245" text-anchor="middle" class="text-dim">(downstream service)</text>
+  <text x="770" y="270" text-anchor="middle" class="text-primary">verify(token, audience)</text>
+  <text x="770" y="290" text-anchor="middle" class="text-dim">validates signature, aud,</text>
+  <text x="770" y="308" text-anchor="middle" class="text-dim">issuer, expiry, leeway</text>
+
+  <!-- Arrows -->
+  <!-- Workload -> Broker (register / issue) -->
+  <path d="M260,250 L335,250" class="arrow"/>
+  <text x="297" y="240" text-anchor="middle" fill="#66FCF1" font-size="10" font-weight="600">1. register</text>
+  <path d="M335,275 L260,275" class="arrow-secondary"/>
+  <text x="297" y="295" text-anchor="middle" fill="#A78BFA" font-size="10" font-weight="600">2. JWT-SVID (5 min)</text>
+
+  <!-- Broker -> Verifier (trust bundle) -->
+  <path d="M580,225 L660,225" class="arrow-secondary"/>
+  <text x="620" y="215" text-anchor="middle" fill="#A78BFA" font-size="10" font-weight="600">A. trust bundle</text>
+
+  <!-- Workload -> Verifier (presents SVID) -->
+  <path d="M150,330 Q150,420 380,420" class="arrow"/>
+  <path d="M380,420 L770,420" class="arrow"/>
+  <path d="M770,420 L770,330" class="arrow"/>
+  <text x="460" y="410" text-anchor="middle" fill="#66FCF1" font-size="11" font-weight="600">3. Authorization: Bearer &lt;SVID&gt;</text>
+
+  <!-- Caption -->
+  <text x="460" y="475" text-anchor="middle" class="text-primary">Verifier returns parsed SPIFFEID -&gt; service authorizes by path prefix</text>
+  <text x="460" y="495" text-anchor="middle" class="text-dim">e.g.  spiffe://prod.kineticgain.com/workload/research-agent-1</text>
+</svg>
